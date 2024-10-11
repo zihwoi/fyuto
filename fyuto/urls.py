@@ -19,4 +19,6 @@ from django.urls import path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('register/', register, name='register'),  # Registration URL
+    path('login/', user_login, name='login'),  # Add this line for login
 ]
