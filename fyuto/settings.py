@@ -78,7 +78,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'fyuto_db',  # Updated to fyuto_db
-        'USER': 'zenn',  # Replace with your PostgreSQL username
+        'USER': 'postgres',  # Replace with your PostgreSQL username
         'PASSWORD': 'zf1000GO!',  # Replace with your PostgreSQL password
         'HOST': 'localhost',
         'PORT': '5432',
