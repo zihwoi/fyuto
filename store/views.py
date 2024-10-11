@@ -20,15 +20,15 @@ def register(request):
 
 def user_login(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        
-        user = authenticate(request, username=username, password=password)
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=username, password=password)
         if user is not None:
-            login(request, user)
-            messages.success(request, 'Login successful!')
-            return redirect('product_list')  # Redirect to the product list or dashboard
-        else:
-            messages.error(request, 'Invalid username or password.')
+                login(request, user)
+                return redirect('store:index')  # Adjust this redirect as needed
+    else:
+        form = AuthenticationForm()
 
-    return render(request, 'store/login.html')
+    return render(request, 'store/login.html', {'form': form})  # Ensure you have a login.html
