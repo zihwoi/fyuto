@@ -1,0 +1,20 @@
+{% extends 'store/base.html' %}
+
+{% block title %}User Registration{% endblock %}
+
+{% block content %}
+    <h1>User Registration</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- Automatically renders form fields -->
+        <button type="submit">Register</button>
+    </form>
+
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}
