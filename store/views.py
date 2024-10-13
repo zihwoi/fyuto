@@ -1,8 +1,14 @@
 # Create your views here.
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
+
+from .models import Product
+
+def index(request):
+    products = Product.objects.all()
+    return render(request, 'store/index.html', {'products': products})
 
 def register(request):
     if request.method == 'POST':

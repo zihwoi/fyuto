@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from store.views import register, user_login  # Ensure you import the login view
+from store.views import register, user_login, index # Ensure you import the login view
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),  # Admin URL for Django's admin interface
+    path('', index, name='index'),  # Home page mapped to the 'index' view
     path('register/', register, name='register'),  # Registration URL
     path('login/', user_login, name='login'),  # Add this line for login
 ]
