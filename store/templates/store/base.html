@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fyuto Store{% endblock %}</title>
+    
+    {% load static %}  <!-- Load static files -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">  <!-- Link to JetBrains Mono -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">  <!-- Link to your CSS file -->
+</head>
+<body>
+    <header>
+        <h1>Welcome to Fyuto Store</h1>
+        <!-- You can add a navigation menu here if needed -->
+        <nav>
+            <ul>
+                <li><a href="{% url 'index' %}">Home</a></li>
+                <li><a href="{% url 'register' %}">Register</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- This is where the content of each page will go -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Fyuto Store. All rights reserved.</p>
+    </footer>
+</body>
+</html>
