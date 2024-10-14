@@ -1,6 +1,6 @@
 # Create your views here.
 from django.contrib.auth import login, authenticate
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 
@@ -38,3 +38,9 @@ def user_login(request):
         form = AuthenticationForm()
 
     return render(request, 'store/login.html', {'form': form})  # Ensure you have a login.html
+
+
+def product_detail(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    return render(request, 'store/product_detail.html', {'product': product})
+
