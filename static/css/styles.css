@@ -9,6 +9,49 @@
     font-family: 'JetBrains Mono', monospace; /* Changed to JetBrains Mono */
 }
 
+a {
+    color: white; /* Set link color */
+    text-decoration: none;
+}
+
+a:hover {
+    color: #ffcc00;
+    text-decoration: underline;
+}
+
+nav {
+    display: flex; /* Use Flexbox to arrange items horizontally */
+    justify-content: center; /* Center the items in the nav */
+    
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
+}
+
+nav ul {
+    display: flex; /* Flex container for navigation links */
+    list-style: none; 
+    padding: 0; 
+    margin: 0; 
+}
+
+nav li {
+    margin-right: 20px; /* Add space between items */
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px; /* Add some padding around the links */
+    background-color: #333; /* Background color for links */
+    border-radius: 4px; /* Optional: rounded corners */
+}
+
+nav a:hover {
+    color: #88ff00;
+    text-decoration: underline;
+    background-color: #555; /* Change background color on hover */
+}
+
 body {
     background-color: #f4f4f4;
     color: #333;
