@@ -119,6 +119,115 @@ header h1 {
     font-size: 1.1em;
 }
 
+.logout-confirmation {
+    text-align: center;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.logout-confirmation h2 {
+    font-size: 24px;
+    color: #333;
+}
+
+.logout-confirmation a {
+    display: inline-block;
+    margin-top: 10px;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* Form container */
+form div {
+    margin-bottom: 15px;
+}
+
+/* Error messages in red */
+.errorlist {
+    color: red;
+    list-style-type: none;
+    padding-left: 0;
+    font-size: 0.9em;
+}
+
+/* Minimal padding for inputs */
+input {
+    padding: 8px;
+    font-size: 1em;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+/* Form submit button */
+button[type="submit"] {
+    padding: 10px 20px;
+    font-size: 1em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Center the form container */
+.form-container {
+    width: 400px; /* Set the width of the form */
+    margin: 50px auto; /* Center the form horizontally and add space from the top */
+    padding: 20px; /* Add padding inside the container */
+    border: 1px solid #ccc; /* Optional: add a border around the form */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    background-color: #f9f9f9; /* Light background color */
+}
+
+/* Form field styles */
+.form-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-container input {
+    width: 100%; /* Ensure inputs fill the width of the container */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+/* Error messages */
+.errorlist {
+    color: red;
+    list-style-type: none;
+    padding-left: 0;
+}
+
+/* Register button */
+.form-container button[type="submit"] {
+    width: 100%; /* Button fills the width of the form */
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.form-container button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+
 /* Footer */
 footer {
     text-align: center;
