@@ -3,26 +3,33 @@
 {% block title %}User Login{% endblock %}
 
 {% block content %}
-    <h1>User Login</h1>
-    <form method="POST">
-        {% csrf_token %}
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        
-        <br>
+    <div class="form-container">
+        <h1>User Login</h1>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <!-- Username field -->
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+            <!-- Password field -->
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
 
-        <br>
+            <!-- Login button -->
+            <button type="submit">Login</button>
+        </form>
 
-        <button type="submit">Login</button>
-    </form>
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+        {% if messages %}
+            <ul>
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 {% endblock %}
