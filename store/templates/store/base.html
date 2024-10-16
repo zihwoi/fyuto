@@ -7,14 +7,15 @@
     
     {% load static %}  <!-- Load static files -->
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">  <!-- Link to JetBrains Mono -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">  <!-- Link to your CSS file -->
 
     <link rel="icon" type="image/x-icon" href="{% static '/favicon.ico' %}">
+    
 </head>
 <body>
     <header>
         <h1>Welcome to Fyuto Store</h1>
-        <!-- You can add a navigation menu here if needed -->
         <nav>
             <ul class="nav">
                 <li><a href="{% url 'index' %}">Home</a></li>
@@ -25,6 +26,8 @@
     </header>
 
     <main>
+        {% block page_title %} <!-- New block for specific page titles -->
+        {% endblock %}
         {% block content %}
         <!-- This is where the content of each page will go -->
         {% endblock %}
