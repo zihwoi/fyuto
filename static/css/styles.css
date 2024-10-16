@@ -10,12 +10,12 @@
 }
 
 a {
-    color: white; /* Set link color */
+    color: rgb(44, 43, 43); /* Set link color */
     text-decoration: none;
 }
 
 a:hover {
-    color: #ffcc00;
+    color: #46c700;
     text-decoration: underline;
 }
 
@@ -59,6 +59,7 @@ body {
     line-height: 1.6;
 }
 
+
 h1, h2 {
     text-align: center;
     margin-bottom: 20px;
@@ -75,12 +76,72 @@ header {
 header h1 {
     font-size: 2.5em;
 }
+/* Padding for Product Catalog title */
+.catalog-title {
+    padding-top: 40px; /* Space above the title */
+    text-align: center; /* Center align the title */
+}
+
+.card {
+    width: 300px; /* Set a fixed width for the cards */
+    height: 400px; /* Set a fixed height for the cards */
+    margin: 10px; /* Space between cards */
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    overflow: hidden; /* Hide overflow content */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow */
+    border: none; /* Remove border from cards */
+    transition: transform 0.2s; /* Smooth hover effect */
+}
+
+.card img {
+    width: 100%; /* Make the image take the full width of the card */
+    height: 200px; /* Set a fixed height for the image area */
+    object-fit: cover; /* Crop the image to fill the area without distorting */
+}
+
+.card-content {
+    padding: 10px; /* Space inside the card for text */
+    text-align: center; /* Center the text */
+}
+
+.card:hover {
+    transform: scale(1.05); /* Scale effect on hover */
+}
+
+/* Keep underline for product titles */
+.card-title a {
+    text-decoration: none;
+    color: inherit; /* Ensures it inherits color from its parent */
+}
+
+.card-title a:hover {
+    text-decoration: underline;
+    color: yellow; /* Optional: add hover color */
+}
+
+/* Remove underline for product descriptions and prices */
+.card-text a,
+.card-body p a,
+.product-list li p {
+    text-decoration: none; /* No underline for links in descriptions */
+    color: inherit; /* Keep the color consistent */
+}
+
+/* Keep description and price unaffected by hover over the card */
+.card-text,
+.card-body p,
+.product-list li p {
+    color: #555; /* Set the default color */
+}
 
 /* Product List Section */
 .product-list {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 20px; /* Added padding for spacing */
 }
 
 .product-list ul {
@@ -88,7 +149,7 @@ header h1 {
     width: 100%;
     max-width: 1200px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Responsive grid */
     gap: 20px;
     padding: 0;
 }
@@ -100,24 +161,101 @@ header h1 {
     border-radius: 10px;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s; /* Added hover effect */
+}
+
+.product-list li:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
 }
 
 .product-list li img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 10px;
+    max-width: 100%; /* Make image responsive */
+    height: 200px; /* Fixed height for images */
+    object-fit: cover; /* Ensure the image covers the area without losing its aspect ratio */
+    object-position: center; /* Center the image */
+    border-radius: 10px; /* Rounded corners for the image */
     margin-bottom: 10px;
 }
 
+/* Set specific sizes */
 .product-list li h2 {
     font-size: 1.5em;
-    margin: 10px 0;
 }
 
-.product-list li p {
-    margin-bottom: 10px;
-    font-size: 1.1em;
+/* Update product list links */
+.product-list li a {
+    color: #333; /* Darker color for links */
+    font-weight: bold; /* Optional: make the link bold for emphasis */
+    text-decoration: none; /* Remove underline by default */
 }
+
+.product-list li a:hover {
+    color: #ffcc00; /* Bright hover color */
+}
+
+/* Product Detail Page Styles */
+.product-detail {
+    max-width: 800px; /* Maximum width for the content */
+    margin: 20px auto; /* Centered horizontally with top/bottom margin */
+    padding: 20px; /* Padding around the content */
+    background-color: #f9f9f9; /* Light background color for contrast */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.product-title {
+    font-size: 2em; /* Larger font for the title */
+    margin-bottom: 15px; /* Space below the title */
+    color: #333; /* Dark color for readability */
+    text-align: center; /* Centered title */
+}
+
+.product-image {
+    display: flex; /* Flexbox for centering the image */
+    justify-content: center; /* Center the image horizontally */
+    margin-bottom: 20px; /* Space below the image */
+}
+
+.product-image .image {
+    max-width: 100%; /* Responsive image */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 10px; /* Rounded corners for the image */
+}
+
+.product-description {
+    text-align: center; /* Centered price */
+    font-size: 1.2em; /* Slightly larger font for description */
+    margin-bottom: 20px; /* Space below the description */
+    color: #555; /* Dark grey for description text */
+}
+
+.product-price {
+    font-size: 1.5em; /* Larger font for price */
+    font-weight: bold; /* Bold text for emphasis */
+    margin-bottom: 20px; /* Space below the price */
+    text-align: center; /* Centered price */
+}
+
+.product-price span {
+    color: #e74c3c; /* Highlight the price with a color */
+}
+
+.back-link {
+    display: inline-block; /* Make the link a block for padding */
+    padding: 10px 20px; /* Padding for the link */
+    background-color: #007bff; /* Button-like background */
+    color: #fff; /* White text color */
+    border-radius: 5px; /* Rounded corners for the button */
+    text-decoration: none; /* Remove underline */
+    text-align: center; /* Centered text */
+    transition: background-color 0.3s; /* Smooth transition on hover */
+}
+
+.back-link:hover {
+    background-color: #0266d1; /* Darker blue on hover */
+    color: #fff; /* White text color */
+}
+
 
 .logout-confirmation {
     text-align: center;
