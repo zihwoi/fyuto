@@ -2,17 +2,26 @@
 
 {% block title %}Fyuto Store{% endblock %}
 
+{% block page_title %}
+    <h2 class="catalog-title">Product Catalog</h2> <!-- Use a specific title for this page -->
+{% endblock %}
+
 {% block content %}
-    <div class="product-list">
+<div class="product-list">
+    <ul>
         {% for product in products %}
-            <div class="product">
-                <h2><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h2>
-                <p>{{ product.description }}</p>
-                <p>Price: ${{ product.price }}</p>
-            </div>
-            {% empty %}
+            <li class="product">
+                <a href="{% url 'product_detail' product.id %}">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+                    <h2>{{ product.name }}</h2>
+                    <p>{{ product.description }}</p>
+                    <p>Price: ${{ product.price }}</p>
+                </a>
+            </li>
+        {% empty %}
             <br>
             <p>No products available, check back later! 😎</p>
         {% endfor %}
-    </div>
+    </ul>
+</div>
 {% endblock %}
