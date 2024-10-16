@@ -1,36 +1,42 @@
 {% extends "store/base.html" %}
 
 {% block page_title %}
-    <h1 class="catalog-title">Product Catalog</h1> <!-- Use a specific title for this page -->
+    <h2 class="catalog-title">Product Catalog</h2> <!-- Use a specific title for this page -->
 {% endblock %}
 
 {% block content %}
-    <div class="category-filter">
-        <h3>Filter by Category:</h3>
-        <ul>
-            <li><a href="{% url 'product_list' %}">All</a></li>
-            {% for category in categories %}
-                <li><a href="{% url 'product_list_by_category' category.id %}">{{ category.name }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    <div class="product-list">
+    <div class="container-fluid"> <!-- Changed to container-fluid for full width -->
         <div class="row">
-            {% for product in products %}
-                <div class="col-md-3"> <!-- Change to col-md-3 for four columns -->
-                    <div class="card mb-4">
-                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                        <div class="card-body">
-                            <h5 class="card-title"><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h5>
-                            <p class="card-text">{{ product.description|truncatewords:10 }}</p>
-                            <p>Price: ${{ product.price }}</p>
-                        </div>
+            <!-- Category Filter Section -->
+            <div class="col-md-3" style="padding-left: 10px;"> <!-- Reduce left padding -->
+                <div class="category-filter mb-4 p-3 border rounded shadow-sm">
+                    <h4>Filter by Category:</h4>
+                    <div class="list-group">
+                        <a href="{% url 'product_list' %}" class="list-group-item list-group-item-action">All</a>
+                        {% for category in categories %}
+                            <a href="{% url 'product_list_by_category' category.id %}" class="list-group-item list-group-item-action">{{ category.name }}</a>
+                        {% endfor %}
                     </div>
                 </div>
-            {% empty %}
-                <p>No products available.</p>
-            {% endfor %}
+            </div>
+
+            <!-- Product List Section -->
+            <div class="col-md-9">
+                <div class="product-list">
+                    <ul>
+                        {% for product in products %}
+                            <li>
+                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                                <h2><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h2>
+                                <p>{{ product.description|truncatewords:10 }}</p>
+                                <p>Price: ${{ product.price }}</p>
+                            </li>
+                        {% empty %}
+                            <p>No products available.</p>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

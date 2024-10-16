@@ -76,10 +76,41 @@ header {
 header h1 {
     font-size: 2.5em;
 }
+
+.btn {
+    margin: 5px; /* Add space between buttons */
+    transition: background-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+}
+
+.btn:hover {
+    background-color: #007bff; /* Change background color on hover */
+    color: #fff; /* Change text color on hover */
+}
+
 /* Padding for Product Catalog title */
 .catalog-title {
     padding-top: 40px; /* Space above the title */
+    padding-bottom: 20px; /* Space above the title */
     text-align: center; /* Center align the title */
+    font-weight: bold;
+}
+
+/* Ensure product images are properly scaled */
+.card-img-top {
+    object-fit: cover;
+    height: 200px; /* Adjust height to standardize image sizes */
+}
+
+.category-filter {
+    background-color: #f8f9fa; /* Light grey background */
+    padding: 15px; /* Add some padding */
+    border-radius: 5px; /* Rounded corners */
+    border: 1px solid #dee2e6; /* Add a border for separation */
+}
+
+/* Add space between category items */
+.category-filter .list-group-item {
+    margin-bottom: 5px;
 }
 
 .card {
@@ -118,7 +149,7 @@ header h1 {
 
 .card-title a:hover {
     text-decoration: underline;
-    color: yellow; /* Optional: add hover color */
+    color: #ffc907; /* Bright hover color */
 }
 
 /* Remove underline for product descriptions and prices */
@@ -190,7 +221,7 @@ header h1 {
 }
 
 .product-list li a:hover {
-    color: #ffcc00; /* Bright hover color */
+    color: #ffc907; /* Bright hover color */
 }
 
 /* Product Detail Page Styles */
