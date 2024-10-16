@@ -4,10 +4,12 @@
 
 {% block content %}
     <div class="product-detail">
-        <h2>{{ product.name }}</h2>
-        <p>{{ product.description }}</p>
-        <p>Price: ${{ product.price }}</p>
-        <!-- You can add an image or other details here -->
-        <a href="/">Back to home</a>
+        <h2 class="product-title">{{ product.name }}</h2>
+        <div class="product-image">
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="image">
+        </div>
+        <p class="product-description">{{ product.description }}</p>
+        <p class="product-price">Price: <span>${{ product.price }}</span></p>
+        <a href="/" class="back-link">Back to home</a>
     </div>
 {% endblock %}
