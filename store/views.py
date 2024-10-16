@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 
-from .models import Product
+from .models import Product, Category
 
 def index(request):
     products = Product.objects.all()
@@ -39,8 +39,24 @@ def user_login(request):
 
     return render(request, 'store/login.html', {'form': form})  # Ensure you have a login.html
 
+def product_list(request, category_id=None):
+    categories = Category.objects.all()
+    products = Product.objects.all()
+
+    if category_id:
+        products = products.filter(category_id=category_id)
+    
+    context = {
+        'categories': categories,
+        'products': products,
+    }
+    return render(request, 'store/product_list.html', context)
+
+    # store/views.py
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, id=product_id)
-    return render(request, 'store/product_detail.html', {'product': product})
-
+    context = {
+        'product': product
+    }
+    return render(request, 'store/product_detail.html', context)

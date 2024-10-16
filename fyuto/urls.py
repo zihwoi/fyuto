@@ -16,8 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from store.views import register, user_login, index, product_detail # Ensure you import the login view
+from store import views
+from store.views import register, user_login, index, product_detail, product_list   # Ensure you import the login view
 from django.contrib.auth import views as auth_views  # Import for auth views
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Admin URL for Django's admin interface
@@ -25,5 +29,11 @@ urlpatterns = [
     path('register/', register, name='register'),  # Registration URL
     path('login/', user_login, name='login'),  # Add this line for login
     path('logout/', auth_views.LogoutView.as_view(template_name='store/logout.html'), name='logout'),
+    path('products/', product_list, name='product_list'),  # Add this line
+    path('category/<int:category_id>/', views.product_list, name='product_list_by_category'),  # This line should be here
     path('product/<int:product_id>/', product_detail, name='product_detail'),
 ]
+
+# For serving media files during development
+if settings.DEBUG:  # Ensures this only runs in development mode
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
