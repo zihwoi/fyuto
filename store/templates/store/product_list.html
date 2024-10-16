@@ -1,0 +1,36 @@
+{% extends "store/base.html" %}
+
+{% block page_title %}
+    <h1 class="catalog-title">Product Catalog</h1> <!-- Use a specific title for this page -->
+{% endblock %}
+
+{% block content %}
+    <div class="category-filter">
+        <h3>Filter by Category:</h3>
+        <ul>
+            <li><a href="{% url 'product_list' %}">All</a></li>
+            {% for category in categories %}
+                <li><a href="{% url 'product_list_by_category' category.id %}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="product-list">
+        <div class="row">
+            {% for product in products %}
+                <div class="col-md-3"> <!-- Change to col-md-3 for four columns -->
+                    <div class="card mb-4">
+                        <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h5>
+                            <p class="card-text">{{ product.description|truncatewords:10 }}</p>
+                            <p>Price: ${{ product.price }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No products available.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
