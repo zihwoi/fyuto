@@ -19,7 +19,10 @@ def register(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
+            messages.success(request, 'Registration successful! You are now logged in.')
             return redirect('store:index')
+        else:
+            messages.error(request, 'Please correct the error(s) below.')
     else:
         form = UserCreationForm()
     return render(request, 'store/register.html', {'form': form})
