@@ -4,7 +4,7 @@ __pycache__/
 
 # Virtual environment
 venv/
-.env
+.env  # Ignore environment variables file
 
 # Django migration files
 *.sqlite3
@@ -16,8 +16,8 @@ migrations/
 # Ignore database files
 *.db
 
-# Ignore any local settings
-settings.py
+# Ignore sensitive settings like API keys
+settings.py  # if you store API keys in this file
 settings_local.py
 
 # Static and media files
@@ -32,3 +32,6 @@ media/
 
 # Logs
 *.log
+
+# Ignore Stripe keys or other sensitive files
+stripe_keys.py  # If you store Stripe keys here
