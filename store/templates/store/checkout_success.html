@@ -1,0 +1,12 @@
+<!-- store/templates/store/checkout_success.html -->
+{% extends 'store/base.html' %}
+
+{% block title %}Payment Successful{% endblock %}
+
+{% block content %}
+<div class="container text-center">
+    <h2>Thank You!</h2>
+    <p>Your payment was successful, and your order has been placed.</p>
+    <a href="{% url 'index' %}" class="btn btn-primary">Back to Home</a>
+</div>
+{% endblock %}

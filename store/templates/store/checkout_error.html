@@ -1,0 +1,12 @@
+<!-- store/templates/store/checkout_error.html -->
+{% extends 'store/base.html' %}
+
+{% block title %}Payment Error{% endblock %}
+
+{% block content %}
+<div class="container text-center">
+    <h2>Oops, something went wrong!</h2>
+    <p>There was an issue processing your payment. Please try again later.</p>
+    <a href="{% url 'checkout' %}" class="btn btn-warning">Try Again</a>
+</div>
+{% endblock %}
