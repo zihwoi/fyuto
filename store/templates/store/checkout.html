@@ -1,12 +1,11 @@
-<!-- store/templates/store/checkout.html -->
 {% extends 'store/base.html' %}
 
 {% block title %}Checkout{% endblock %}
 
 {% block content %}
-<h2>Checkout</h2>
+<h2 class="page-headings">Checkout</h2>
 
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Product</th>
@@ -25,25 +24,26 @@
     </tbody>
 </table>
 
-<p>Total: {{ cart.get_total_price }}</p>
+<p class="total-price">Total: {{ cart.get_total_price }}</p>
 
-<form action="{% url 'checkout' %}" method="post" id="payment-form">
+<form action="{% url 'checkout' %}" method="post" id="payment-form" class="checkout-form">
     {% csrf_token %}
-    
-    <!-- Stripe card input element -->
+
     <div class="form-row">
-        <label for="card-element">Credit or debit card</label>
-        <div id="card-element">
+        <label for="card-element" class="card-label">Credit or debit card</label>
+        <div id="card-element" class="card-element">
             <!-- Stripe's JS will inject the card element here -->
         </div>
         <!-- Error message container -->
-        <div id="card-errors" role="alert"></div>
+        <div id="card-errors" class="card-errors" role="alert"></div>
     </div>
 
-    <button type="submit" class="btn btn-success mt-3">Confirm and Pay</button>
+    <button type="submit" class="btn btn-success mt-3 checkout-button">Confirm and Pay</button>
 </form>
 </div>
+{% endblock %}
 
+{% block javascript %}
 <!-- Include Stripe.js -->
 <script src="https://js.stripe.com/v3/"></script>
 
@@ -58,7 +58,7 @@
     card.mount('#card-element');
 
     // Handle real-time validation errors from the card Element.
-    card.on('change', function(event) {
+    card.on('change', function (event) {
         var displayError = document.getElementById('card-errors');
         if (event.error) {
             displayError.textContent = event.error.message;
@@ -69,26 +69,28 @@
 
     // Handle form submission.
     var form = document.getElementById('payment-form');
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', function (event) {
         event.preventDefault();
 
-        stripe.createToken(card).then(function(result) {
+        // Create a token from the card element
+        stripe.createToken(card).then(function (result) {
             if (result.error) {
-                // Inform the user if there was an error.
+                // Show error in the card errors div
                 var errorElement = document.getElementById('card-errors');
                 errorElement.textContent = result.error.message;
             } else {
-                // Send the token to your server.
+                // If no error, create hidden input for the token and append to form
                 var hiddenInput = document.createElement('input');
                 hiddenInput.setAttribute('type', 'hidden');
                 hiddenInput.setAttribute('name', 'stripeToken');
                 hiddenInput.setAttribute('value', result.token.id);
                 form.appendChild(hiddenInput);
 
-                // Submit the form.
+                // Submit the form with the token
                 form.submit();
             }
         });
     });
+
 </script>
 {% endblock %}
