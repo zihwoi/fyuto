@@ -69,10 +69,16 @@ def product_detail(request, product_id):
     return render(request, 'store/product_detail.html', context)
 
 def cart_add(request, product_id):
-    """Add product to the cart."""
     cart = Cart(request)
     product = get_object_or_404(Product, id=product_id)
-    cart.add(product=product)
+    
+    # Get quantity from POST request and convert it to integer
+    quantity = request.POST.get('quantity', 1)  # Default to 1 if not provided
+    quantity = int(quantity)  # Ensure quantity is an integer
+    
+    # Add the product to the cart with the specified quantity
+    cart.add(product, quantity)
+    
     return redirect('cart_detail')
 
 def cart_remove(request, product_id):
@@ -91,6 +97,10 @@ def checkout(request):
     cart = Cart(request)
     total = int(cart.get_total_price() * 100)  # Convert to cents for Stripe
 
+    if len(cart) == 0:
+        messages.error(request, 'Your cart is empty. Please add items before proceeding to checkout.')
+        return redirect('cart_detail')
+
     if request.method == 'POST':
         stripe_token = request.POST.get('stripeToken')
 
@@ -105,9 +115,9 @@ def checkout(request):
                 description='Order payment',
                 source=stripe_token
             )
-            # Clear cart after successful payment
-            cart.clear()
-            return render(request, 'store/checkout_success.html')
+            logger.info(f'Charge successful: {charge.id}')  # Log successful payment
+            cart.clear()  # Clear cart after successful payment
+            return redirect('checkout_success')  # Redirect after successful payment
         except stripe.error.StripeError as e:
             messages.error(request, 'Payment error: {}'.format(e.user_message))
             return render(request, 'store/checkout_error.html')
