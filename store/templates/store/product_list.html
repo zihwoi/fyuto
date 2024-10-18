@@ -1,42 +1,56 @@
 {% extends "store/base.html" %}
 
 {% block page_title %}
-    <h2 class="catalog-title">Product Catalog</h2> <!-- Use a specific title for this page -->
+<h2 class="catalog-title">Product Catalog</h2>
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid"> <!-- Changed to container-fluid for full width -->
-        <div class="row">
-            <!-- Category Filter Section -->
-            <div class="col-md-3" style="padding-left: 10px;"> <!-- Reduce left padding -->
-                <div class="category-filter mb-4 p-3 border rounded shadow-sm">
-                    <h4>Filter by Category:</h4>
-                    <div class="list-group">
-                        <a href="{% url 'product_list' %}" class="list-group-item list-group-item-action">All</a>
-                        {% for category in categories %}
-                            <a href="{% url 'product_list_by_category' category.id %}" class="list-group-item list-group-item-action">{{ category.name }}</a>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product List Section -->
-            <div class="col-md-9">
-                <div class="product-list">
-                    <ul>
-                        {% for product in products %}
-                            <li>
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                                <h2><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h2>
-                                <p>{{ product.description|truncatewords:10 }}</p>
-                                <p>Price: ${{ product.price }}</p>
-                            </li>
-                        {% empty %}
-                            <p>No products available.</p>
-                        {% endfor %}
-                    </ul>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Category Filter Section -->
+        <div class="col-md-3" style="padding-left: 10px;">
+            <div class="category-filter mb-4 p-3 border rounded shadow-sm">
+                <h4>Filter by Category:</h4>
+                <div class="list-group">
+                    <a href="{% url 'product_list' %}" class="list-group-item list-group-item-action">All</a>
+                    {% for category in categories %}
+                    <a href="{% url 'product_list_by_category' category.id %}"
+                        class="list-group-item list-group-item-action">{{ category.name }}</a>
+                    {% endfor %}
                 </div>
             </div>
         </div>
+
+        <!-- Product List Section -->
+        <div class="col-md-9">
+            <div class="product-list">
+                <ul class="list-unstyled"> <!-- Added Bootstrap class to remove default list styling -->
+                    {% for product in products %}
+                    <li class="mb-4"> <!-- Add some margin at the bottom of each product -->
+                        <div class="d-flex flex-column h-100"> <!-- Flex container for vertical alignment -->
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+                            <!-- Make image responsive -->
+                            <h2 class="mt-2"><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h2>
+                            <p class="flex-grow-1">{{ product.description|truncatewords:10 }}</p>
+                            <p>Price: ${{ product.price }}</p>
+                            <!-- Add to Cart Form -->
+                            <form action="{% url 'cart_add' product.id %}" method="post" class="mb-3">
+                                {% csrf_token %}
+                                <div class="input-group mb-2">
+                                    <input type="number" name="quantity" value="1" min="1" class="form-control"
+                                        aria-label="Quantity">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                            </form>
+
+                        </div>
+                    </li>
+                    {% empty %}
+                    <p>No products available.</p>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
+</div>
 {% endblock %}
