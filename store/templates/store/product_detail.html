@@ -3,13 +3,71 @@
 {% block title %}{{ product.name }} - Fyuto Store{% endblock %}
 
 {% block content %}
-    <div class="product-detail">
+<div class="product-detail">
+    <!-- Main Product Image Section -->
+    <div class="text-center mb-4">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded main-product-image" style="max-width: 100%; height: auto;">
+    </div>
+
+    <!-- Product Details Section -->
+    <div class="product-info text-center">
         <h2 class="product-title">{{ product.name }}</h2>
-        <div class="product-image">
-            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="image">
-        </div>
         <p class="product-description">{{ product.description }}</p>
         <p class="product-price">Price: <span>${{ product.price }}</span></p>
-        <a href="/" class="back-link">Back to home</a>
+
+        <!-- Add to Cart Form -->
+        <form action="{% url 'cart_add' product.id %}" method="post" class="add-to-cart-form mt-4">
+            {% csrf_token %}
+            <div class="input-group mb-3 justify-content-center">
+                <!-- Decrement Button -->
+                <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity(this)" aria-label="Decrease Quantity">
+                    <svg class="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14" />
+                    </svg>
+                </button>
+
+                <!-- Quantity Input -->
+                <input type="text" name="quantity" value="1" class="form-control text-center" aria-label="Quantity" id="quantity-input-{{ product.id }}"
+                       style="width: 150px; max-width: 150px;">
+                
+                <!-- Increment Button -->
+                <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity(this)" aria-label="Increase Quantity">
+                    <svg class="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Add to Cart Button -->
+            <button type="submit" class="btn btn-primary">Add to Cart</button>
+        </form>
+
+ <!-- Back to Catalog Link -->
+        <a href="{% url 'product_list' %}" class="back-link btn btn-outline-secondary mt-3 d-inline-block back-to-catalog">Back to Catalog</a>
     </div>
+</div>
+
+<!-- Notification -->
+<div id="cart-notification" class="cart-notification" style="display: none;">
+    <p>Product has been added to your cart!</p>
+</div>
+
+
+<script>
+
+function incrementQuantity(button) {
+        const input = button.parentElement.querySelector('input[name="quantity"]');
+        input.value = parseInt(input.value) + 1; // Increment by 1
+    }
+
+    function decrementQuantity(button) {
+        const input = button.parentElement.querySelector('input[name="quantity"]');
+        const currentValue = parseInt(input.value);
+        if (currentValue > 1) { // Prevent going below 1
+            input.value = currentValue - 1; // Decrement by 1
+        }
+    }
+
+   
+</script>
 {% endblock %}
