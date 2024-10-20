@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Fyuto Store{% endblock %}</title>
-    
-    {% load static %}  <!-- Load static files -->
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">  <!-- Link to JetBrains Mono -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">  <!-- Link to your CSS file -->
 
-    <link rel="icon" type="image/x-icon" href="{% static '/favicon.ico' %}">
-    
+    {% load static %} <!-- Load static files -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Link to JetBrains Mono -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"> <!-- Link to your CSS file -->
+
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+
 </head>
+
 <body>
     <header>
         <h1>Welcome to Fyuto Store</h1>
@@ -21,7 +24,8 @@
                 <li><a href="{% url 'index' %}">Home</a></li>
                 <li><a href="{% url 'register' %}">Register</a></li>
                 <li><a href="{% url 'login' %}">Login</a></li>
-                <li><a href="{% url 'product_list' %}"> Catalog</a></li>
+                <li><a href="{% url 'product_list' %}">Catalog</a></li>
+                <li><a href="{% url 'cart_detail' %}">Cart</a></li>
             </ul>
         </nav>
     </header>
@@ -37,5 +41,59 @@
     <footer>
         <p>&copy; 2024 Fyuto Store. All rights reserved.</p>
     </footer>
+
+    <!-- JavaScript Block -->
+    {% block javascript %}
+    <!-- This block will allow individual pages to inject custom scripts -->
+    <!-- Include Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+        // Initialize Stripe
+        var stripe = Stripe('{{ stripe_public_key }}'); // Make sure this variable is passed from the view
+        var elements = stripe.elements();
+
+        // Create an instance of the card Element.
+        var card = elements.create('card');
+        // Mount the card Element into the `card-element` div.
+        card.mount('#card-element');
+
+        // Handle real-time validation errors from the card Element.
+        card.on('change', function (event) {
+            var displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+
+        // Handle form submission.
+        var form = document.getElementById('payment-form');
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Create a token from the card element
+            stripe.createToken(card).then(function (result) {
+                if (result.error) {
+                    // Show error in the card errors div
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    // If no error, create hidden input for the token and append to form
+                    var hiddenInput = document.createElement('input');
+                    hiddenInput.setAttribute('type', 'hidden');
+                    hiddenInput.setAttribute('name', 'stripeToken');
+                    hiddenInput.setAttribute('value', result.token.id);
+                    form.appendChild(hiddenInput);
+
+                    // Submit the form with the token
+                    form.submit();
+                }
+            });
+        });
+    </script>
+    {% endblock %}
 </body>
+
 </html>
