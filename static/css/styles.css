@@ -223,10 +223,13 @@ header h1 {
     /* Set the default color */
 }
 
-#card-element {
-    border: 1px solid black;
+.card-element {
+    width: 100%;
     padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
+
 
 /* Style for the Stripe card input field */
 .card-element {
