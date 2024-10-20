@@ -5,8 +5,11 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from .models import Product, Category
 from .cart import Cart
-import stripe
+import stripe, logging
 from django.conf import settings  # Import the settings module
+
+# Set up logger
+logger = logging.getLogger(__name__)
 
 stripe.api_key = settings.STRIPE_SECRET_KEY  # Use the secret key from settings
 
@@ -97,36 +100,49 @@ def checkout(request):
     cart = Cart(request)
     total = int(cart.get_total_price() * 100)  # Convert to cents for Stripe
 
+    # Check if cart is empty
     if len(cart) == 0:
         messages.error(request, 'Your cart is empty. Please add items before proceeding to checkout.')
         return redirect('cart_detail')
 
+    # Process the form submission (POST)
     if request.method == 'POST':
         stripe_token = request.POST.get('stripeToken')
 
+        # Ensure Stripe token is present
         if not stripe_token:
             messages.error(request, 'Stripe token is missing. Please try again.')
             return redirect('cart_detail')
 
         try:
+            # Create a Stripe charge
             charge = stripe.Charge.create(
                 amount=total,  # Amount in cents
                 currency='usd',
                 description='Order payment',
                 source=stripe_token
             )
-            logger.info(f'Charge successful: {charge.id}')  # Log successful payment
-            cart.clear()  # Clear cart after successful payment
-            return redirect('checkout_success')  # Redirect after successful payment
+            
+            # Log successful charge
+            logger.info(f'Charge successful: {charge.id}')
+
+            # Clear the cart after a successful charge
+            cart.clear()
+
+            # Redirect to success page
+            return redirect('checkout_success')
+
         except stripe.error.StripeError as e:
-            messages.error(request, 'Payment error: {}'.format(e.user_message))
+            # Log and display the error message
+            logger.error(f'Error during payment: {e}')
+            messages.error(request, f'Payment error: {e.user_message}')
             return render(request, 'store/checkout_error.html')
 
+    # If GET request, render checkout page with the Stripe public key
     return render(request, 'store/checkout.html', {
         'cart': cart,
-        'stripe_public_key': settings.STRIPE_PUBLIC_KEY
+        'stripe_public_key': settings.STRIPE_PUBLIC_KEY  # Pass public key to frontend
     })
-
 
 def checkout_success(request):
     return render(request, 'store/checkout_success.html')
