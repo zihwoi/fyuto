@@ -1,42 +1,95 @@
 {% extends "store/base.html" %}
 
 {% block page_title %}
-    <h2 class="catalog-title">Product Catalog</h2> <!-- Use a specific title for this page -->
+<h2 class="catalog-title">Product Catalog</h2>
 {% endblock %}
 
 {% block content %}
-    <div class="container-fluid"> <!-- Changed to container-fluid for full width -->
-        <div class="row">
-            <!-- Category Filter Section -->
-            <div class="col-md-3" style="padding-left: 10px;"> <!-- Reduce left padding -->
-                <div class="category-filter mb-4 p-3 border rounded shadow-sm">
-                    <h4>Filter by Category:</h4>
-                    <div class="list-group">
-                        <a href="{% url 'product_list' %}" class="list-group-item list-group-item-action">All</a>
-                        {% for category in categories %}
-                            <a href="{% url 'product_list_by_category' category.id %}" class="list-group-item list-group-item-action">{{ category.name }}</a>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-
-            <!-- Product List Section -->
-            <div class="col-md-9">
-                <div class="product-list">
-                    <ul>
-                        {% for product in products %}
-                            <li>
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                                <h2><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h2>
-                                <p>{{ product.description|truncatewords:10 }}</p>
-                                <p>Price: ${{ product.price }}</p>
-                            </li>
-                        {% empty %}
-                            <p>No products available.</p>
-                        {% endfor %}
-                    </ul>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Category Filter Section -->
+        <div class="col-md-3" style="padding-left: 10px;">
+            <div class="category-filter mb-4 p-3 border rounded shadow-sm">
+                <h4>Filter by Category:</h4>
+                <div class="list-group">
+                    <a href="{% url 'product_list' %}" class="list-group-item list-group-item-action">All</a>
+                    {% for category in categories %}
+                    <a href="{% url 'product_list_by_category' category.id %}"
+                        class="list-group-item list-group-item-action">{{ category.name }}</a>
+                    {% endfor %}
                 </div>
             </div>
         </div>
+
+        <!-- Product List Section -->
+        <div class="col-md-9">
+            <div class="product-list">
+                <ul class="list-unstyled">
+                    {% for product in products %}
+                    <li class="mb-4">
+                        <div class="d-flex flex-column h-100">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
+                            <h2 class="mt-2"><a href="{% url 'product_detail' product.id %}">{{ product.name }}</a></h2>
+                            <p class="flex-grow-1">{{ product.description|truncatewords:10 }}</p>
+                            <p>Price: ${{ product.price }}</p>
+                            <!-- Add to Cart Form -->
+                            <form action="{% url 'cart_add' product.id %}" method="post" class="mb-3">
+                                {% csrf_token %}
+                                <div class="input-group mb-2 justify-content-center">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        onclick="decrementQuantity(this)" aria-label="Decrease Quantity">
+                                        <!-- Custom Minus SVG Icon -->
+                                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                            viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="M5 12h14" />
+                                        </svg>
+
+                                    </button>
+                                    <input type="text" name="quantity" value="1" class="form-control text-center"
+                                        aria-label="Quantity" id="quantity-input-{{ product.id }}"
+                                        style="width: 150px; max-width: 150px;"> <!-- Adjusted width and max-width -->
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        onclick="incrementQuantity(this)" aria-label="Increase Quantity">
+                                        <!-- Custom Plus SVG Icon -->
+                                        <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true"
+                                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                            viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                                stroke-width="2" d="M5 12h14m-7 7V5" />
+                                        </svg>
+
+                                    </button>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Add to Cart</button>
+                            </form>
+
+                        </div>
+                    </li>
+                    {% empty %}
+                    <p>No products available.</p>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
     </div>
+</div>
+
+<script>
+    function incrementQuantity(button) {
+    const input = button.parentElement.querySelector('input[name="quantity"]');
+    input.value = parseInt(input.value) + 1; // Increment by 1
+}
+
+function decrementQuantity(button) {
+    const input = button.parentElement.querySelector('input[name="quantity"]');
+    const currentValue = parseInt(input.value);
+    if (currentValue > 1) { // Prevent going below 1
+        input.value = currentValue - 1; // Decrement by 1
+    }
+}
+
+
+</script>
 {% endblock %}
