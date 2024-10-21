@@ -1,7 +1,12 @@
 {% extends "store/base.html" %}
+{% load static %}
 
 {% block page_title %}
 <h2 class="catalog-title">Product Catalog</h2>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cart-notification.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -33,7 +38,8 @@
                             <p class="flex-grow-1">{{ product.description|truncatewords:10 }}</p>
                             <p>Price: ${{ product.price }}</p>
                             <!-- Add to Cart Form -->
-                            <form action="{% url 'cart_add' product.id %}" method="post" class="mb-3">
+                            <form id="add-to-cart-form" class="add-to-cart-form mt-4" data-product-id="{{ product.id }}"
+                                onsubmit="event.preventDefault(); handleAddToCart(event);">
                                 {% csrf_token %}
                                 <div class="input-group mb-2 justify-content-center">
                                     <button type="button" class="btn btn-outline-secondary"
@@ -76,20 +82,79 @@
     </div>
 </div>
 
+<!-- Notification -->
+<div id="cart-notification" class="cart-notification" style="display: none;">
+    <p>Product has been added to your cart!</p>
+</div>
+{% endblock %}
+
+{% block javascript %}
+
 <script>
     function incrementQuantity(button) {
-    const input = button.parentElement.querySelector('input[name="quantity"]');
-    input.value = parseInt(input.value) + 1; // Increment by 1
-}
-
-function decrementQuantity(button) {
-    const input = button.parentElement.querySelector('input[name="quantity"]');
-    const currentValue = parseInt(input.value);
-    if (currentValue > 1) { // Prevent going below 1
-        input.value = currentValue - 1; // Decrement by 1
+        const input = button.parentElement.querySelector('input[name="quantity"]');
+        input.value = parseInt(input.value) + 1; // Increment by 1
     }
-}
 
+    function decrementQuantity(button) {
+        const input = button.parentElement.querySelector('input[name="quantity"]');
+        const currentValue = parseInt(input.value);
+        if (currentValue > 1) { // Prevent going below 1
+            input.value = currentValue - 1; // Decrement by 1
+        }
+    }
+
+    function showNotification(message) {
+        const notification = document.getElementById('cart-notification');
+        notification.textContent = message;
+
+        // Set display to block and trigger fade-in
+        notification.style.display = 'block';
+        notification.classList.add('show');
+        notification.classList.remove('hide');
+
+        // Start the fade-out after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show'); // Trigger fade-out (reduce opacity)
+            notification.classList.add('hide');
+        }, 3000);  // Show for 3 seconds before fading out
+
+        // After fade-out transition ends, hide the notification completely
+        setTimeout(() => {
+            notification.style.display = 'none';  // Only hide after fade-out is completed
+        }, 3500);  // Wait 500ms for fade-out to complete (transition duration in CSS)
+    }
+
+    function handleAddToCart(event) {
+        const form = event.target;  // Use the event target directly
+        const productId = form.dataset.productId; // Add data attribute to form
+        const quantity = document.getElementById(`quantity-input-${productId}`).value;
+        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(`/cart/add/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: `quantity=${quantity}`
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);  // Log response to see if it's successful
+                showNotification('Product added to cart successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error adding product to cart');
+            });
+    }
 
 </script>
 {% endblock %}
