@@ -7,6 +7,7 @@ from .models import Product, Category
 from .cart import Cart
 import stripe, logging
 from django.conf import settings  # Import the settings module
+from django.http import JsonResponse
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -25,9 +26,8 @@ def register(request):
             username = form.cleaned_data.get('username')
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            messages.success(request, 'Registration successful! You are now logged in.')
-            return redirect('store:index')
+            messages.success(request, 'Registration successful! Please login with your credentials.')
+            return redirect('login')  # Redirect to login page after successful registration
         else:
             messages.error(request, 'Please correct the error(s) below.')
     else:
@@ -41,13 +41,18 @@ def user_login(request):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
-        if user is not None:
+            if user is not None:
                 login(request, user)
-                return redirect('store:index')  # Adjust this redirect as needed
+                messages.success(request, f'Welcome back, {username}!')
+                return redirect('index')  # Redirect to home page after successful login
+            else:
+                messages.error(request, 'Invalid username or password.')
+        else:
+            messages.error(request, 'Invalid username or password.')
     else:
         form = AuthenticationForm()
-
-    return render(request, 'store/login.html', {'form': form})  # Ensure you have a login.html
+    
+    return render(request, 'store/login.html', {'form': form})
 
 def product_list(request, category_id=None):
     categories = Category.objects.all()
@@ -81,6 +86,13 @@ def cart_add(request, product_id):
     
     # Add the product to the cart with the specified quantity
     cart.add(product, quantity)
+
+     # Return JSON response for AJAX requests
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Product added to cart successfully'
+        })
     
     return redirect('cart_detail')
 
