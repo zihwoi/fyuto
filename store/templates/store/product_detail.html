@@ -1,12 +1,18 @@
 {% extends 'store/base.html' %}
+{% load static %}
 
 {% block title %}{{ product.name }} - Fyuto Store{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cart-notification.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="product-detail">
     <!-- Main Product Image Section -->
     <div class="text-center mb-4">
-        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded main-product-image" style="max-width: 100%; height: auto;">
+        <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded main-product-image"
+            style="max-width: 100%; height: auto;">
     </div>
 
     <!-- Product Details Section -->
@@ -16,24 +22,31 @@
         <p class="product-price">Price: <span>${{ product.price }}</span></p>
 
         <!-- Add to Cart Form -->
-        <form action="{% url 'cart_add' product.id %}" method="post" class="add-to-cart-form mt-4">
+        <form id="add-to-cart-form" class="add-to-cart-form mt-4"
+            onsubmit="event.preventDefault(); handleAddToCart(event);">
             {% csrf_token %}
             <div class="input-group mb-3 justify-content-center">
                 <!-- Decrement Button -->
-                <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity(this)" aria-label="Decrease Quantity">
-                    <svg class="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14" />
+                <button type="button" class="btn btn-outline-secondary" onclick="decrementQuantity(this)"
+                    aria-label="Decrease Quantity">
+                    <svg class="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 12h14" />
                     </svg>
                 </button>
 
                 <!-- Quantity Input -->
-                <input type="text" name="quantity" value="1" class="form-control text-center" aria-label="Quantity" id="quantity-input-{{ product.id }}"
-                       style="width: 150px; max-width: 150px;">
-                
+                <input type="text" name="quantity" value="1" class="form-control text-center" aria-label="Quantity"
+                    id="quantity-input-{{ product.id }}" style="width: 150px; max-width: 150px;">
+
                 <!-- Increment Button -->
-                <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity(this)" aria-label="Increase Quantity">
-                    <svg class="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5" />
+                <button type="button" class="btn btn-outline-secondary" onclick="incrementQuantity(this)"
+                    aria-label="Increase Quantity">
+                    <svg class="w-6 h-6 text-gray-800" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 12h14m-7 7V5" />
                     </svg>
                 </button>
             </div>
@@ -42,8 +55,9 @@
             <button type="submit" class="btn btn-primary">Add to Cart</button>
         </form>
 
- <!-- Back to Catalog Link -->
-        <a href="{% url 'product_list' %}" class="back-link btn btn-outline-secondary mt-3 d-inline-block back-to-catalog">Back to Catalog</a>
+        <!-- Back to Catalog Link -->
+        <a href="{% url 'product_list' %}"
+            class="back-link btn btn-outline-secondary mt-3 d-inline-block back-to-catalog">Back to Catalog</a>
     </div>
 </div>
 
@@ -51,11 +65,11 @@
 <div id="cart-notification" class="cart-notification" style="display: none;">
     <p>Product has been added to your cart!</p>
 </div>
+{% endblock %}
 
-
+{% block javascript %}
 <script>
-
-function incrementQuantity(button) {
+    function incrementQuantity(button) {
         const input = button.parentElement.querySelector('input[name="quantity"]');
         input.value = parseInt(input.value) + 1; // Increment by 1
     }
@@ -68,6 +82,55 @@ function incrementQuantity(button) {
         }
     }
 
-   
+    function showNotification(message) {
+        const notification = document.getElementById('cart-notification');
+        notification.textContent = message;
+
+        // Set display to block and trigger fade-in
+        notification.style.display = 'block';
+        notification.classList.add('show');
+        notification.classList.remove('hide');
+
+        // Start the fade-out after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show'); // Trigger fade-out (reduce opacity)
+            notification.classList.add('hide');
+        }, 3000);  // Show for 3 seconds before fading out
+
+        // After fade-out transition ends, hide the notification completely
+        setTimeout(() => {
+            notification.style.display = 'none';  // Only hide after fade-out is completed
+        }, 3500);  // Wait 500ms for fade-out to complete (transition duration in CSS)
+    }
+
+    function handleAddToCart(event) {
+        const form = document.getElementById('add-to-cart-form');
+        const productId = '{{ product.id }}';
+        const quantity = document.getElementById(`quantity-input-${productId}`).value;
+        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(`/cart/add/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: `quantity=${quantity}`
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(() => {
+                showNotification('Product added to cart successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Error adding product to cart');
+            });
+    }
 </script>
 {% endblock %}
