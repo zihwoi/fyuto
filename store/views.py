@@ -3,11 +3,14 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
-from .models import Product, Category
+from .models import Product, Category, Order, OrderItem
 from .cart import Cart
 import stripe, logging
+from django.db import transaction
 from django.conf import settings  # Import the settings module
 from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 
 # Set up logger
 logger = logging.getLogger(__name__)
@@ -108,6 +111,30 @@ def cart_detail(request):
     cart = Cart(request)
     return render(request, 'store/cart_detail.html', {'cart': cart})
 
+@login_required
+def order_list(request):
+    """View for displaying all orders of the current user."""
+    orders = Order.objects.filter(user=request.user).order_by('-created_at')
+    return render(request, 'store/order_list.html', {'orders': orders})
+
+@login_required
+def order_detail(request, order_id):
+    """View for displaying details of a specific order."""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, 'store/order_detail.html', {'order': order})
+
+@login_required
+@staff_member_required
+def update_order_status(request, order_id):
+    if request.method == 'POST':
+        order = get_object_or_404(Order, id=order_id)
+        new_status = request.POST.get('status')
+        if new_status in [s[0] for s in Order.STATUS_CHOICES]:
+            order.status = new_status
+            order.save()
+            return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
+
 def checkout(request):
     cart = Cart(request)
     total = int(cart.get_total_price() * 100)  # Convert to cents for Stripe
@@ -120,23 +147,54 @@ def checkout(request):
     # Process the form submission (POST)
     if request.method == 'POST':
         stripe_token = request.POST.get('stripeToken')
+        shipping_address = request.POST.get('shipping_address')
 
-        # Ensure Stripe token is present
+        # Validate required fields
         if not stripe_token:
-            messages.error(request, 'Stripe token is missing. Please try again.')
-            return redirect('cart_detail')
+            messages.error(request, 'Payment information is missing. Please try again.')
+            return redirect('checkout')
+
+        if not shipping_address:
+            messages.error(request, 'Shipping address is required.')
+            return redirect('checkout')
 
         try:
-            # Create a Stripe charge
-            charge = stripe.Charge.create(
-                amount=total,  # Amount in cents
-                currency='usd',
-                description='Order payment',
-                source=stripe_token
-            )
-            
+            # Use transaction.atomic to ensure database consistency
+            with transaction.atomic():
+                # Create a Stripe charge
+                charge = stripe.Charge.create(
+                    amount=total,
+                    currency='usd',
+                    description=f'Order payment for {request.user.email}',
+                    source=stripe_token,
+                    metadata={
+                        'user_id': request.user.id,
+                        'email': request.user.email
+                    }
+                )
+
+                # Create the order
+                order = Order.objects.create(
+                    user=request.user,
+                    total_amount=cart.get_total_price(),
+                    shipping_address=shipping_address,
+                    status='processing',
+                    stripe_charge_id=charge.id  # Store Stripe charge ID for reference
+                )
+                
+                # Create order items
+                order_items = []
+                for item in cart:
+                    order_items.append(OrderItem(
+                        order=order,
+                        product=item['product'],
+                        quantity=item['quantity'],
+                        price=item['price']
+                    ))
+                OrderItem.objects.bulk_create(order_items)  # Bulk create for better performance
+
             # Log successful charge
-            logger.info(f'Charge successful: {charge.id}')
+            logger.info(f'Order {order.id} created successfully with charge {charge.id}')
 
             # Clear the cart after a successful charge
             cart.clear()
@@ -150,6 +208,14 @@ def checkout(request):
             messages.error(request, f'Payment error: {e.user_message}')
             return render(request, 'store/checkout_error.html')
 
+    # For GET request, render checkout page
+    context = {
+        'cart': cart,
+        'stripe_public_key': settings.STRIPE_PUBLIC_KEY,
+        'total_amount': cart.get_total_price(),
+        'total_amount_cents': total,
+    }
+    
     # If GET request, render checkout page with the Stripe public key
     return render(request, 'store/checkout.html', {
         'cart': cart,
@@ -161,3 +227,4 @@ def checkout_success(request):
 
 def checkout_error(request):
     return render(request, 'store/checkout_error.html')
+
