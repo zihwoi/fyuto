@@ -25,6 +25,8 @@ STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 #STRIPE_PUBLIC_KEY = config('STRIPE_PUBLIC_KEY')
 
 #LOGOUT_REDIRECT_URL = 'index'  # Redirect to the home page after logout
+ADMIN_SITE_HEADER = "Fyuto Store Administration"
+ADMIN_SITE_TITLE = "Fyuto Store Admin"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
