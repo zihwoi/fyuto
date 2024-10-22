@@ -40,6 +40,9 @@ urlpatterns = [
     path('cart/add/<int:product_id>/', cart_add, name='cart_add'),  # Add product to the cart
     path('cart/remove/<int:product_id>/', cart_remove, name='cart_remove'),  # Remove product from the cart
 
+    path('orders/', views.order_list, name='order_list'),
+    path('order/<int:order_id>/', views.order_detail, name='order_detail'),
+
     # Checkout URL
     path('checkout/', checkout, name='checkout'),  # Checkout process
     path('checkout_success/', checkout_success, name='checkout_success'), #Checkout success page
