@@ -29,18 +29,111 @@
 
 <p class="total-price">Total: {{ cart.get_total_price }}</p>
 
+<!-- Checkout Form -->
 <form action="{% url 'checkout' %}" method="post" id="payment-form" class="checkout-form">
     {% csrf_token %}
 
-    <div class="form-row">
-        <label for="card-element" class="card-label">Credit or debit card</label>
-        <div id="card-element" class="card-element">
-            <!-- Stripe's JS will inject the card element here -->
+    <!-- Shipping Address Section -->
+    <div class="mb-4">
+        <h3 class="mb-3">Shipping Information</h3>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="shipping_address">Street Address</label>
+                <input type="text" name="shipping_address" id="shipping_address" class="form-control"
+                    placeholder="123 Main St" required>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label for="city">City</label>
+                <input type="text" name="city" id="city" class="form-control" placeholder="Your City" required>
+            </div>
         </div>
-        <!-- Error message container -->
-        <div id="card-errors" class="card-errors" role="alert"></div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="state">State</label>
+                <input type="text" name="state" id="state" class="form-control" placeholder="Your State" required>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label for="zip_code">ZIP Code</label>
+                <input type="text" name="zip_code" id="zip_code" class="form-control" placeholder="ZIP Code" required>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Information Section -->
+    <div class="mb-3">
+        <h3 class="mb-3">Payment Information</h3>
+
+        <div class="form-row">
+            <div class="form-group col-12">
+                <label for="card-element" class="card-label">Credit or debit card</label>
+                <div id="card-element" class="card-element border p-3 rounded">
+                    <!-- Stripe's JS will inject the card element here -->
+                </div>
+            </div>
+
+            <!-- Error message container -->
+            <div id="card-errors" class="card-errors text-danger mt-2" role="alert"></div>
+        </div>
     </div>
 
     <button type="submit" class="btn btn-success mt-3 checkout-button">Confirm and Pay</button>
 </form>
+{% endblock %}
+
+{% block javascript %}
+<!-- This block will allow individual pages to inject custom scripts -->
+<!-- Include Stripe.js -->
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+
+
+    // Initialize Stripe
+    var stripe = Stripe('{{ stripe_public_key }}'); // Make sure this variable is passed from the view
+    var elements = stripe.elements();
+
+    // Create an instance of the card Element.
+    var card = elements.create('card');
+    // Mount the card Element into the `card-element` div.
+    card.mount('#card-element');
+
+    // Handle real-time validation errors from the card Element.
+    card.on('change', function (event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    // Handle form submission.
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        // Create a token from the card element
+        stripe.createToken(card).then(function (result) {
+            if (result.error) {
+                // Show error in the card errors div
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                // If no error, create hidden input for the token and append to form
+                var hiddenInput = document.createElement('input');
+                hiddenInput.setAttribute('type', 'hidden');
+                hiddenInput.setAttribute('name', 'stripeToken');
+                hiddenInput.setAttribute('value', result.token.id);
+                form.appendChild(hiddenInput);
+
+                // Submit the form with the token
+                form.submit();
+            }
+        });
+    });
+</script>
 {% endblock %}
