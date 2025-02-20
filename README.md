@@ -24,7 +24,7 @@ The purpose of **Fyuto** is to create a functional e-commerce platform while dem
 2. **Product Catalog:**
    - Display a catalog of products with categories and filtering options.
    - Product details page with images, descriptions, and prices.
-   
+
    ![alt text](image-2.png)
 
    ![alt text](image-3.png)
@@ -32,13 +32,16 @@ The purpose of **Fyuto** is to create a functional e-commerce platform while dem
    - Add products to the shopping cart.
    - Secure checkout process with Stripe payment gateway integration.
    - Review orders before completing the purchase.
+
    ![alt text](image-4.png)
 
 
-![alt text](image-5.png)
+   ![alt text](image-5.png)
+
 4. **Admin Panel:**
    - Easy-to-use interface for store owners to add, edit, or remove products.
    - Manage customer orders and track order status.
+
    ![alt text](image-6.png)
 
    ![alt text](image-7.png)
