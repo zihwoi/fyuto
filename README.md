@@ -14,23 +14,34 @@ The purpose of **Fyuto** is to create a functional e-commerce platform while dem
 3. **Portfolio Goal:** Showcase backend and frontend skills, including payment gateway integration and UI/UX design.
 
 ## Features
-
+![Image](https://github.com/user-attachments/assets/b39ee289-c8a5-43be-912d-6f9ff94ed2a7)
+   
+   ![alt text](image-1.png)
 1. **User Authentication:**
    - User registration, login, and logout functionality.
    - Users can track their orders and manage their accounts.
-   
+
+   ![alt text](image.png)
 2. **Product Catalog:**
    - Display a catalog of products with categories and filtering options.
    - Product details page with images, descriptions, and prices.
+   ![alt text](image-2.png)
 
+   ![alt text](image-3.png)
 3. **Shopping Cart & Checkout:**
    - Add products to the shopping cart.
    - Secure checkout process with Stripe payment gateway integration.
    - Review orders before completing the purchase.
+   ![alt text](image-4.png)
 
+
+![alt text](image-5.png)
 4. **Admin Panel:**
    - Easy-to-use interface for store owners to add, edit, or remove products.
    - Manage customer orders and track order status.
+   ![alt text](image-6.png)
+
+   ![alt text](image-7.png)
 
 ## Tech Stack
 
