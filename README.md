@@ -14,7 +14,6 @@ The purpose of **Fyuto** is to create a functional e-commerce platform while dem
 3. **Portfolio Goal:** Showcase backend and frontend skills, including payment gateway integration and UI/UX design.
 
 ## Features
-![Image](https://github.com/user-attachments/assets/b39ee289-c8a5-43be-912d-6f9ff94ed2a7)
    
    ![alt text](image-1.png)
 1. **User Authentication:**
@@ -25,6 +24,7 @@ The purpose of **Fyuto** is to create a functional e-commerce platform while dem
 2. **Product Catalog:**
    - Display a catalog of products with categories and filtering options.
    - Product details page with images, descriptions, and prices.
+   
    ![alt text](image-2.png)
 
    ![alt text](image-3.png)
